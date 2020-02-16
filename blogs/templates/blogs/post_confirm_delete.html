@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Post{% endblock %}
+
+{% block body %}
+<div class="post-single">
+    <div class="login-header">
+      <h1>Delete Post</h1>
+    </div>
+    <section class="common-form">
+      <p>Are you sure you want to delete "{{ object.title }}" ?</p>
+      <div class="form-group button col-md-12">
+        <ul class="boxcontainer">
+          <li><form action="" method="post">{% csrf_token %}
+              <button type="submit" class="btn btn-secondary delete">Delete</button>
+          </form></li>
+          <li><p><a class="btn btn-secondary" href="javascript:history.back()">&lt; Back</a></p></li>
+        </ul>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "blogs/base.html" %}
+{% load bootstrap4 %}
+{% load i18n static %}
+{% load myfunc %}
+
+{% block title %}Beeeee Blog 記事一覧{% endblock %}
+
+{% block body %}
+<!-- Latest Posts -->
+<main class="posts-listing col-lg-8">
+  <div class="container frameout">
+    <div class="row">
+      <!-- post -->
+      {% for post in object_list %}
+      <div class="post col-xl-6">
+        {% if post.image %}
+          <div class="post-thumbnail"><a href="{% url 'blogs:detail' post.id %}">
+          <img src="{{post.image.url}}" alt="..." class="img-fluid"></a></div>
+        {% else %}
+          <div class="post-thumbnail"><a href="{% url 'blogs:detail' post.id %}" style="width: 100%;">
+          <img src="{% static 'blogs/img/post-img-temp-cat.svg' %}" alt="..." class="img-fluid"></a></div>
+        {% endif %}
+        <div class="post-details">
+          <div class="post-meta d-flex justify-content-between">
+            <div class="date meta-last"><i class="icon-clock"></i>{{post.created_at}}</div>
+            <div class="category"><a href="#">{{post.category}}</a></div>
+          </div><a href="{% url 'blogs:detail' post.id %}">
+            <h3 class="h4">{{post.title}}</h3></a>
+          <p class="text-muted">{{post.summary|safe}}</p>
+          <footer class="post-footer d-flex align-items-center"><a href="#" class="author d-flex align-items-center flex-wrap">
+              <div class="avatar"><img src="{{post.author.avatar.url}}" alt="..." class="img-fluid"></div>
+              <div class="title"><span>{{post.author}}</span></div></a>
+            <div class="comments"><i class="icon-comment"></i>{{post.comment_set.count}}</div>
+            <div class="date meta-last" ><a href="{% url 'blogs:detail' post.id %}" class="menu__link hover12" data-hover-label="READ MORE"><span class="menu__label hover12__label">READ MORE</span></a></div>
+
+          </footer>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination pagination-template d-flex justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?{% url_replace request page_obj.previous_page_number %}" class="page-link"> <i class="fa fa-angle-left"></i></a></li>
+            <li class="page-item"><a href="?{% url_replace request page_obj.previous_page_number %}" class="page-link">{{page_obj.previous_page_number}}</a></li>
+          {% endif %}
+          <li class="page-item"><a href="#" class="page-link active forbidden">{{page_obj.number}}</a></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a href="?{% url_replace request page_obj.next_page_number %}" class="page-link">{{page_obj.next_page_number}}</a></li>
+            <li class="page-item"><a href="?{% url_replace request page_obj.next_page_number %}" class="page-link"> <i class="fa fa-angle-right"></i></a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% block title %}{{ object|yesno:'Edit,Add New'}} Post{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'blogs/css/loading.css' %}">
+<link rel="stylesheet" href="{% static 'blogs/css/loading-btn.css' %}">
+{% endblock %}
+
+{% block body %}
+{# https://docs.djangoproject.com/en/2.0/ref/templates/builtins/#yesno #}
+<div class="post-single">
+  <div class="login-header">
+    <h1>Write Post</h1>
+  </div>
+  <section class="common-form">
+    <h2>Why not write daily diary?</h2>
+    <div class="container">
+     <p><label for="">Add:</label></p>
+      <ul class="button boxcontainer">
+        <li><a href="#modal-series" class="btn btn-secondary go">Series</a></li>
+        <li><a href="#modal-category" class="btn btn-secondary go">Category</a></li>
+        <li><a href="#modal-tag" class="btn btn-secondary go">Tag</a></li>
+        <li><a href="#modal-pictures" class="btn btn-secondary go">Picture</a></li>
+      </ul>
+   </div>
+      <form action="" method="post" enctype="multipart/form-data">
+         <div class="row">
+          {% csrf_token %}
+          <div class="form-group col-md-12">
+            {{ form.as_p }}
+          </div>
+          <div class="form-group button col-md-12">
+            <ul class="boxcontainer">
+              <li> <a href="{% url 'blogs:delete' post.pk %}" class="btn btn-secondary delete">Delete</a></li>
+              <li><a href="{% url 'blogs:index' %}" class="btn btn-secondary ">Cancel</a></li>
+              <li><button type="submit" class="btn btn-secondary">Save</button></li>
+            </ul>
+          </div>
+          </div>
+      </form>
+<!-- alert -->
+      <div class="alert alert-success fixed-top" id="success-alert" style="display:none"> Auto Saved...</div>
+<!-- endalert -->
+
+<!-- series form -->
+       	<div id="modal-series" class="modal-frame">
+          <div class="overlay">
+            <div class="modal-contents">
+       				<a href="#" class="close-button">&times;</a>
+              <form class=""  method="post">
+                  {% csrf_token %}
+                  <p><label for="id_add_series">Series name:</label> <input type="text" name="add_series" maxlength="255" id="id_add_series" /></p>
+                  <button type="submit" id="id_add_series_submit" class="btn btn-secondary ld-over add_series_submit">Submit<div class="ld ld-ball ld-bounce"></div></button>
+              </form>
+       		   </div>
+          </div>
+       	</div>
+<!-- category form -->
+        <div id="modal-category" class="modal-frame">
+          <div class="overlay">
+            <div class="modal-contents">
+       				<a href="#" class="close-button">&times;</a>
+              <form class=""  method="post">
+                  {% csrf_token %}
+                  <p><label for="id_add_category">Category name:</label> <input type="text" name="add_category" maxlength="255" id="id_add_category" /></p>
+                  <button type="submit" id="id_add_category_submit" class="btn btn-secondary ld-over add_category_submit">Submit<div class="ld ld-ball ld-bounce"></div></button>
+              </form>
+            </div>
+          </div>
+       	</div>
+<!-- tag form -->
+        <div id="modal-tag" class="modal-frame">
+          <div class="overlay">
+            <div class="modal-contents">
+       				<a href="#" class="close-button">&times;</a>
+              <form class="" id="add_tag_form" method="post">
+                  {% csrf_token %}
+                  <p><label for="id_add_tag">Tag name:</label> <input type="text" name="add_tag" maxlength="255" id="id_add_tag" /></p>
+                  <button type="submit" id="id_add_tag_submit" class="btn btn-secondary ld-over add_tag_submit">Submit<div class="ld ld-ball ld-bounce"></div></button>
+              </form>
+         		</div>
+          </div>
+        </div>
+<!-- Pictures form -->
+        <div id="modal-pictures" class="modal-frame">
+          <div class="overlay">
+            <div class="modal-contents">
+       				<a href="#" class="close-button">&times;</a>
+              <form class="" id="add_pictures_form"  method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <p><label for="id_add_pictures">Pictures name:</label> <input type="file" name="add_pictures" id="id_add_pictures" accept="image/*" /></p>
+                  <button type="submit" id="id_add_pictures_submit" class="btn btn-secondary ld-over add_pictures_submit">Submit<div class="ld ld-ball ld-bounce"></div></button>
+              </form>
+         		</div>
+          </div>
+        </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<!-- <script type="text/javascript" src="{% static "blogs/js/addajax.js" %}"></script> -->
+
+<script>
+$(function() {
+  function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  var csrftoken = getCookie('csrftoken');
+
+  function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+
+  var add = function (e) {
+  var thisform = this;
+  var formData = new FormData();
+  var form = e.data.form;
+  var loading = e.data.loading;
+  var targetpath = e.data.targetpath;
+  var cacheflag = e.data.cache;
+  if (cacheflag) {
+    formData.append('image', $(form)[0].files[0]);
+  } else {
+    formData.append('name', $(form).val());
+  }
+  $.ajax({
+  url: targetpath,
+  datatype: 'json',
+  cache: cacheflag,
+  type: 'post',
+  data:formData,
+  processData: false,
+  contentType: false,
+  beforeSend: function(xhr, settings) {
+    $(loading).addClass("running");
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      };
+  },
+  success:console.log(formData), // 送信に成功したとき
+  success:function(){
+    $(loading).removeClass("running");
+    $(thisform).after('<p class="submitted">Successfully submitted</p>');
+  },
+  }).done(function(response){
+    console.log('success!');  // レスポンスがあったとき
+    $(loading).removeClass("running");
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.log("エラーが発生しました。ステータス：" + jqXHR.status); // エラーが発生したとき
+    $(loading).removeClass("running");
+    $(thisform).after('<p class="submitted">Failed to submit...</p>');
+  });
+  return false;
+  };
+
+  $("#id_add_tag_submit").click({
+    loading : ".add_tag_submit",
+    form : "#id_add_tag",
+    targetpath : '{% url "blogs:add-tag" %}',
+    cache : false,
+  },
+  add
+  );
+
+  $("#id_add_category_submit").click({
+    loading : ".add_category_submit",
+    form : "#id_add_category",
+    targetpath : '{% url "blogs:add-category" %}',
+    cache : false,
+  },
+  add
+  );
+
+  $("#id_add_series_submit").click({
+    loading : ".add_series_submit",
+    form : "#id_add_series",
+    targetpath : '{% url "blogs:add-series" %}',
+    cache : false,
+  },
+  add
+  );
+
+  $("#id_add_pictures_submit").click({
+    loading : ".add_pictures_submit",
+    form : "#id_add_pictures",
+    targetpath : '{% url "blogs:add-pictures" %}',
+    cache : true,
+  },
+  add);
+
+  $('#id_image').on('change', function() {
+  var formData = new FormData();
+  var targetpath = '{% url "blogs:update-ajax-image" post.id %}';
+  formData.append('image', $(this)[0].files[0]);
+  $.ajax({
+  url: targetpath,
+  type: 'post',
+  dataType: 'json',
+  data: formData,
+  processData: false,
+  contentType: false,
+  success:console.log('send featured image!'), // 送信に成功したとき
+  }).done(function(response){
+    console.log('success!');  // レスポンスがあったとき
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.log("エラーが発生しました。ステータス：" + jqXHR.status); // エラーが発生したとき
+  });
+  return false;
+  });
+
+  setInterval(function() {
+  $.ajax({
+  url: '{% url "blogs:update-ajax" post.id %}',
+  datatype: 'json',
+  cache: false,
+  type: 'post',
+  data:{
+    "title": $("#id_title").val(),
+    "image": $("#id_image").val(),
+    "series": $("#id_series").val(),
+    "category": $("#id_category").val(),
+    "tag": $("#id_tag").val(),
+    "body": CKEDITOR.instances.id_body.getData(),
+    "is_public": $("#id_is_public:checked").val(),
+    "notification": "",
+  },
+  success:function(){
+  $("#success-alert").show();
+  setTimeout(function() { $("#success-alert").hide(); }, 2000);
+  },
+  success:console.log('send auto-save data!'), // 送信に成功したとき
+  }).done(function(response){
+  console.log('success!');  // レスポンスがあったとき
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+  console.log("エラーが発生しました。ステータス：" + jqXHR.status); // エラーが発生したとき
+  });
+  },
+  90000
+  );
+})
+</script>
+{% endblock %}

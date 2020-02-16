@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout{% endblock %}
+
+{% block body %}
+<div class="post-single">
+    <div class="login-header">
+      <h1>Logged Out</h1>
+    </div>
+    <section class="common-form">
+      <p>Thanks for spending some quality time with the Web site today.</p>
+      <p><a href="{% url 'login' %}">Log in again</a></p>
+    </section>
+</div>
+{% endblock %}

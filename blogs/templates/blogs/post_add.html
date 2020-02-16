@@ -1,0 +1,64 @@
+{% load i18n static %}
+<!DOCTYPE html>{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>add parties</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="all,follow">
+
+<link rel="stylesheet" href="{% static 'blogs/vendor/bootstrap/css/bootstrap.min.css' %}">
+<!-- Font Awesome CSS-->
+<link rel="stylesheet" href="{% static 'blogs/vendor/font-awesome/css/font-awesome.min.css' %}">
+<!-- Custom icon font-->
+<link rel="stylesheet" href="{% static 'blogs/css/fontastic.css' %}">
+<!-- Google fonts - Open Sans-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+<!-- Fancybox-->
+<link rel="stylesheet" href="{% static 'blogs/vendor/@fancyapps/fancybox/jquery.fancybox.min.css' %}">
+<!-- theme stylesheet-->
+<!-- <link rel="stylesheet" href="{% static 'blogs/css/style.default.css' %}" id="theme-stylesheet"> -->
+<link rel="stylesheet" href="{% static 'blogs/css/style.sea.css' %}" id="theme-stylesheet">
+<!-- Custom stylesheet - for your changes-->
+<link rel="stylesheet" href="{% static 'blogs/css/custom.css' %}">
+</head>
+<body>
+<main class="post blog-post col-lg-8">
+  <div class="container frameout">
+    <div class="post-single">
+      <div class="post-details">
+      <div class="login-header">
+        <h1>Write Post</h1>
+      </div>
+      <section class="common-form">
+        <h2>Why not write daily diary?</h2>
+          <form action="" method="post">
+             <div class="row">
+
+              <div class="form-group col-md-12">
+                {% csrf_token %}
+                {{ form.as_p }}
+              </div>
+              <div class="form-group button col-md-12">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">Write</button>
+              </div>
+              </div>
+          </form>
+      </section>
+    </div>
+  </div>
+  </div>
+</main>
+
+<!-- Javascript files-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"> </script>
+<script src="{% static 'blogs/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'blogs/vendor/jquery.cookie/jquery.cookie.js' %}"> </script>
+<script src="{% static 'blogs/vendor/@fancyapps/fancybox/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'blogs/js/front.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Title: {{post.title}}
+Author: {{post.author}}
+
+Let's click on the link below and Check it out!
+
+{{ base_url }}{% url 'blogs:detail' post.id %}

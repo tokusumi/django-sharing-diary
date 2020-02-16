@@ -1,0 +1,18 @@
+# accountapp/accounts/templates/accounts/signup.html
+
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="post-single">
+    <div class="login-header">
+      <h1>Sign up</h1>
+    </div>
+    <section class="common-form">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-secondary">Sign up</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% load imagekit %}
+{% load myfunc %}
+
+{% block title %}Write Post{% endblock %}
+
+{% block extra_css %}
+<style>
+#table{
+	width: 100%;
+	border-collapse: collapse;
+}
+#table td,
+#table th{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+#table th{
+	font-weight: bold;
+}
+#table thead th{
+	background:#e6e6e6;
+}
+</style>
+<!--[if !IE]><!-->
+<style>
+@media only screen and (max-width:800px){
+	#table{
+		display: block;
+	}
+		#table thead{
+			display: none;
+		}
+		#table tbody{
+			display: block;
+		}
+			#table tbody tr{
+				display: block;
+				margin-bottom: 1.5em;
+			}
+			#table tbody th,
+			#table tbody td{
+				display: list-item;
+				border: none;
+				list-style-type: none;
+			}
+			#table tbody th{
+				margin-bottom: 5px;
+				background:#e6e6e6;
+			}
+			#table tbody td{
+				margin-left: 20px;
+				padding: 0;
+			}
+			#table tbody td:nth-of-type(1):before { content: " "; }
+			#table tbody td:nth-of-type(2):before { content: "[AUTHOR] "; }
+			#table tbody td:nth-of-type(3):before { content: "[UPDATED_AT] "; }
+      #table tbody td:nth-of-type(4):before { content: "[公開設定] "; }
+      #table tbody td:nth-of-type(5):before { content: "[SUMMARY] "; }
+}
+</style>
+<!--<![endif]-->
+{% endblock %}
+
+{% block body %}
+{# https://docs.djangoproject.com/en/2.0/ref/templates/builtins/#yesno #}
+<div class="post-single">
+  <div class="login-header">
+    <h1>Edit List</h1>
+  </div>
+  <section class="common-form">
+    <table id="table">
+      <thead>
+        <tr>
+          <th>TITLE</th>
+          <th>THUMB</th>
+          <th>AUTHOR</th>
+          <th>UPDATED AT</th>
+          <th>公開設定</th>
+          <!-- <th>SERIES</th>
+          <th>CATEGORY</th>
+          <th>TAG</th> -->
+          <th>SUMMARY</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in object_list %}
+        <tr>
+          <th><a href="{% url 'blogs:update' post.id %}">{{post.title}}</a></th>
+          <td><a href="{% url 'blogs:update' post.id %}">
+            {% if post.image %}
+              <div class="image">{% thumbnail '75x75' post.image -- alt="..." class="img-fluid" %}</div>
+            {% else %}
+              <div class="image"><img src="{% static 'blogs/img/post-img-temp-cat.svg' %}" alt="..." class="img-fluid"></div>
+            {% endif %}</a></td>
+          <td><a href="{% url 'blogs:update' post.id %}">{{post.author}}</a></td>
+          <td>{{post.updated_at}}</td>
+          <td>
+            {% if post.is_public %}
+            <div class="image"><img src="{% static 'blogs/img/icon-yes.svg' %}" alt="..." class="img-fluid"></div>
+            {% else %}
+            <div class="image"><img src="{% static 'blogs/img/icon-no.svg' %}" alt="..." class="img-fluid"></div>
+            {% endif %}</td>
+          <!-- <td>{{post.series}}</td>
+          <td>{{post.category}}</td>
+          <td>{{post.tag}}</td> -->
+          <td>{{post.summary}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <!-- Pagination -->
+    {% if is_paginated %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination pagination-template d-flex justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a href="?{% url_replace request page_obj.previous_page_number %}" class="page-link"> <i class="fa fa-angle-left"></i></a></li>
+            <li class="page-item"><a href="?{% url_replace request page_obj.previous_page_number %}" class="page-link">{{page_obj.previous_page_number}}</a></li>
+          {% endif %}
+          <li class="page-item"><a href="#" class="page-link active forbidden">{{page_obj.number}}</a></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a href="?{% url_replace request page_obj.next_page_number %}" class="page-link">{{page_obj.next_page_number}}</a></li>
+            <li class="page-item"><a href="?{% url_replace request page_obj.next_page_number %}" class="page-link"> <i class="fa fa-angle-right"></i></a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </section>
+</div>
+
+{% endblock %}

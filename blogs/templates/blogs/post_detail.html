@@ -1,0 +1,97 @@
+{% extends "blogs/base.html" %}
+{% load bootstrap4 %}
+{% load i18n static %}
+{% load widget_tweaks %}
+{% block title %}{{post.title}} - Beeeee Blog -{% endblock %}
+
+{% block body %}
+
+<main class="post blog-post col-lg-8">
+  <div class="container frameout">
+    <div class="post-single">
+      {% if post.image %}
+        <div class="post-thumbnail"><img src="{{post.image.url}}" alt="..." class="img-fluid"></div>
+      {% else %}
+        <div class="post-thumbnail"><img src="{% static 'blogs/img/post-img-temp-cat.svg' %}" alt="..." class="img-fluid"></div>
+      {% endif %}
+      <div class="post-details">
+        <div class="post-meta d-flex justify-content-between">
+          <div class="category">{{post.category}}</div>
+        </div>
+        <h1>{{post.title}}<a href="#"><i class="fa fa-bookmark-o"></i></a></h1>
+        <div class="post-footer d-flex align-items-center flex-column flex-sm-row">
+           <a href="#" class="author d-flex align-items-center flex-wrap">
+            <div class="avatar"><img src="{{ post.author.avatar.url }}"  alt="..." class="img-fluid"></div>
+            <div class="title"><span>{{post.author}}</span></div>
+          </a>
+           <div class="d-flex align-items-center flex-wrap">
+            <div class="date"><i class="icon-clock"></i> {{post.created_at}}</div>
+            <!-- <div class="views"><i class="icon-eye"></i> 500</div> -->
+            <div class="comments meta-last"><i class="icon-comment"></i>{{post.comment_set.count}}</div>
+          </div>
+        </div>
+        <div class="post-body">
+          {{post.body|safe}}
+        </div>
+        <div class="post-tags">
+          {% for posts_tag in post.tag.all %}
+            <a href="{% url 'blogs:index' %}?tag={{posts_tag.name}}" class="tag">#{{posts_tag}}</a>
+          {% endfor %}
+        </div>
+        <div class="posts-nav d-flex justify-content-between align-items-stretch flex-column flex-md-row">
+          {% if prev_obj %}
+            <a href="{% url 'blogs:detail' prev_obj.id %}" class="prev-post text-left d-flex align-items-center"><div class="icon prev"><i class="fa fa-angle-left"></i></div><div class="text"><strong class="text-primary">Previous Post </strong><h6>{{prev_obj.title}}</h6></div></a>
+          {% else %}
+            <a href="#" class="prev-post text-left d-flex align-items-center"><div class="icon prev"><i class="fa fa-angle-left"></i></div><div class="text"><strong class="text-primary">Previous Post </strong><h6>Nothing</h6></div></a>
+          {% endif %}
+          {% if next_obj %}
+            <a href="{% url 'blogs:detail' next_obj.id %}" class="next-post text-right d-flex align-items-center justify-content-end"><div class="text"><strong class="text-primary">Next Post </strong><h6>{{next_obj.title}}</h6></div><div class="icon next"><i class="fa fa-angle-right"></i></div></a>
+          {% else %}
+            <a href="#" class="next-post text-right d-flex align-items-center justify-content-end"><div class="text"><strong class="text-primary">Next Post </strong><h6>Coming soon...</h6></div><div class="icon next"><i class="fa fa-angle-right"></i></div></a>
+          {% endif %}
+        </div>
+      <!-- Comment -->
+       <div class="post-comments">
+          <header>
+            <h3 class="h6">Post Comments<span class="no-of-comments">({{post.comment_set.all.count}})</span></h3>
+          </header>
+          {% for comment in post.comment_set.all %}
+          <div class="comment">
+            <div class="comment-header d-flex justify-content-between">
+              <div class="user d-flex align-items-center">
+                {% if comment.author.avatar %}
+                <div class="image"><img src="{{comment.author.avatar.url}}" alt="..." class="img-fluid rounded-circle"></div>
+                {% else %}
+                <div class="image"><img src="{% static 'blogs/img/user.svg' %}" alt="..." class="img-fluid rounded-circle"></div>
+                {% endif %}
+                <div class="title"><strong>{{comment.author}}</strong><span class="date">{{comment.created_at}}</span></div>
+              </div>
+            </div>
+            <div class="comment-body">
+              <p>{{comment.body}}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="add-comment">
+          <header>
+            <h3 class="h6">Leave a reply</h3>
+          </header>
+
+          <form action="{% url 'blogs:detail' post.pk %}" class="commenting-form" method="POST">
+            <div class="row">
+              <div class="form-group col-md-12">
+                {% render_field form.body class="form-control" placeholder="Type your comment" %}
+              </div>
+                {% csrf_token %}
+              <div class="form-group col-md-12">
+                <button type="submit" class="btn btn-secondary">Submit Comment</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% block title %}Write Post{% endblock %}
+
+{% block body %}
+{# https://docs.djangoproject.com/en/2.0/ref/templates/builtins/#yesno #}
+<div class="post-single">
+  <div class="login-header">
+    <h1>Post</h1>
+  </div>
+  <section class="common-form">
+    <h2>Why not write?</h2>
+      <form action="" method="post">
+         <div class="row">
+          {% csrf_token %}
+          <div class="form-group col-md-12">
+          </div>
+            <ul class="form-group button boxcontainer col-md-12">
+              <li><button type="submit" class="btn btn-secondary">New</button></li>
+              <li><a href="{% url 'blogs:editlist' %}" class="btn btn-secondary ">Edit</a></li>
+          </div>
+      </form>
+  </section>
+</div>
+{% endblock %}

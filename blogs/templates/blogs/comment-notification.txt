@@ -1,0 +1,8 @@
+Comment by {{ post.author }} at the following post.
+
+Title: {{post.post.title}}
+Author: {{post.post.author}}
+
+Let's click on the link below and Check it out!
+
+{{ base_url }}{% url 'blogs:detail' post.post.id %}
